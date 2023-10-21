@@ -6,7 +6,7 @@ WORKDIR /src
 COPY ["ExecutDeviceIoT.csproj", "./"]
 RUN dotnet restore "ExecutDeviceIoT.csproj"
 COPY . .
-WORKDIR "/src/ExecutDeviceIoT"
+WORKDIR "/src/"
 RUN dotnet build "ExecutDeviceIoT.csproj" -c Release -o /app/build
 
 FROM build AS publish
