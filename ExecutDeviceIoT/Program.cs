@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
+/*builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.Listen(IPAddress.Any, 44356, options =>
     {
-        options.Protocols = HttpProtocols.Http1AndHttp2;
+        options.Protocols = Https;
     });
-});
+});*/
 
-// Add services to the container.
+// Add services to the container. HttpProtocols.Http1AndH
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
