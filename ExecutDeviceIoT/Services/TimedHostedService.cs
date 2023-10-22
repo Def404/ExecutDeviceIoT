@@ -1,4 +1,6 @@
-﻿namespace ExecutingDevice.Services;
+﻿using ExecutingDevice;
+
+namespace ExecutDeviceIoT.Services;
 
 public class TimedHostedService : IHostedService, IDisposable
 {
@@ -34,7 +36,7 @@ public class TimedHostedService : IHostedService, IDisposable
             };
             JsonContent content = JsonContent.Create(data);
             HttpClient client = new HttpClient();
-            var response = client.PostAsync("https://localhost:7023/Gateway/PostDeviceData", content);
+            var response = client.PostAsync("https://192.168.150.3:44304/Gateway/PostDeviceData", content);
             
             _logger.LogInformation($"{DateTime.UtcNow} | POST data to main device. {response.Result.StatusCode}");
         }
