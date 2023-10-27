@@ -1,4 +1,5 @@
-﻿using ExecutingDevice;
+﻿using System.Net;
+using ExecutingDevice;
 
 namespace ExecutDeviceIoT.Services;
 
@@ -28,6 +29,8 @@ public class TimedHostedService : IHostedService, IDisposable
         if (_config["DeviceInfo:Status"].Equals(Status.RUN))
         {
             // POST DATA to HEAD CONTROLLER 
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };       
 
             var data = new DeviceData
             {
@@ -35,7 +38,7 @@ public class TimedHostedService : IHostedService, IDisposable
                 Data = "Good Day"
             };
             JsonContent content = JsonContent.Create(data);
-            HttpClient client = new HttpClient();
+            HttpClient client = new HttpClient(clientHandler);
             var response = client.PostAsync("https://192.168.150.3:44304/Gateway/PostDeviceData", content);
             
             _logger.LogInformation($"{DateTime.UtcNow} | POST data to main device. {response.Result.StatusCode}");
