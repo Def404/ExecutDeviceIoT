@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Cryptography;
 using ExecutingDevice;
 
 namespace ExecutDeviceIoT.Services;
@@ -30,18 +31,24 @@ public class TimedHostedService : IHostedService, IDisposable
         {
             // POST DATA to HEAD CONTROLLER 
             HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };       
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
-            var data = new DeviceData
+            using (Aes myAes = Aes.Create())
             {
-                Name = _config["DeviceInfo:Name"],
-                Data = "Good Day"
-            };
-            JsonContent content = JsonContent.Create(data);
-            HttpClient client = new HttpClient(clientHandler);
-            var response = client.PostAsync("https://192.168.150.3:44304/Gateway/PostDeviceData", content);
+                AesFunction aesFunction = new AesFunction(myAes.Key, myAes.IV);
+                
+                var data = new DeviceData
+                {
+                    Name = _config["DeviceInfo:Name"],
+                    Data = aesFunction.EncryptStringToBytes($"Good day: {DateTime.Now}")
+                };
+                JsonContent content = JsonContent.Create(data);
+                HttpClient client = new HttpClient(clientHandler);
+                var response = client.PostAsync("https://192.168.150.3:44304/Gateway/PostDeviceData", content);
             
-            _logger.LogInformation($"{DateTime.UtcNow} | POST data to main device. {response.Result.StatusCode}");
+                _logger.LogInformation($"{DateTime.UtcNow} | POST data to main device. {response.Result.StatusCode}");
+            }
+           
         }
            
     }
@@ -63,6 +70,6 @@ public class TimedHostedService : IHostedService, IDisposable
     private class DeviceData
     {
         public string Name { get; set; }
-        public string Data { get; set; }
+        public byte[] Data { get; set; }
     }
 }
