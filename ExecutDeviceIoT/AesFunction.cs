@@ -28,8 +28,10 @@ public class AesFunction
         
         using (Aes aesAlg = Aes.Create())
         {
-            aesAlg.Key = _key;
-            aesAlg.IV = _IV;
+            aesAlg.KeySize = 128;
+            aesAlg.Key = new byte[128 / 8];
+            aesAlg.IV = new byte[128 / 8];
+            aesAlg.Padding = PaddingMode.Zeros;  
             
             ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
             
@@ -50,37 +52,4 @@ public class AesFunction
         return encrypted;
     }
     
-    public string DecryptStringFromBytes(byte[] cipherText)
-    {
-        if (cipherText == null || cipherText.Length <= 0)
-            throw new ArgumentNullException("cipherText");
-        if (_key == null || _key.Length <= 0)
-            throw new ArgumentNullException("_key");
-        if (_IV == null || _IV.Length <= 0)
-            throw new ArgumentNullException("_IV");
-        
-        string plaintext = null;
-
-       
-        using (Aes aesAlg = Aes.Create())
-        {
-            aesAlg.Key = _key;
-            aesAlg.IV = _IV;
-            
-            ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-            
-            using (MemoryStream msDecrypt = new MemoryStream(cipherText))
-            {
-                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                {
-                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                    {
-                        plaintext = srDecrypt.ReadToEnd();
-                    }
-                }
-            }
-        }
-
-        return plaintext;
-    }
 }

@@ -20,7 +20,7 @@ public class TimedHostedService : IHostedService, IDisposable
     {
         _logger.LogInformation("Timed Hosted Service running.");
 
-        _timer = new Timer(DoWork, null, TimeSpan.Zero,TimeSpan.FromSeconds(30));
+        _timer = new Timer(DoWork, null, TimeSpan.Zero,TimeSpan.FromSeconds(60));
 
         return Task.CompletedTask;
     }
