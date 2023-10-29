@@ -40,17 +40,17 @@ public class DeviceInfoController : ControllerBase
                 newStatus = Status.RUN;
                 break;
             default:
-                return new JsonResult(HttpStatusCode.BadRequest);
+                return NotFound();
                 break;
         }
         
         if(newStatus.Equals(oldStatus))
-            return new JsonResult(HttpStatusCode.BadRequest);
+            return NotFound();
         
         _config["DeviceInfo:Status"] = newStatus;
         _logger.LogInformation($"{DateTime.UtcNow} | Change status: {oldStatus} --> {newStatus}");
         
-        return new JsonResult(HttpStatusCode.OK);
+        return Ok();
     }
     
 }
